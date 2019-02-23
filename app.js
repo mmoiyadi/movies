@@ -35,8 +35,10 @@ const nav =  [
 ]; 
 
 const movieRouter = require('./src/routes/movieRoute')(nav);
+const adminRouter = require('./src/routes/adminRoute')(nav);
  
 app.use('/movies',movieRouter);
+app.use('/admin',adminRouter);
 
 app.get("/", function (req, res) {
     //res.sendFile(path.join(__dirname, 'views/index.html'));

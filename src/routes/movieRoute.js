@@ -1,67 +1,73 @@
 const express = require('express');
-const movieRouter = express.Router();
-const sql = require('mssql');
+const {MongoClient, ObjectID} = require('mongodb');
 const debug = require('debug')('app');
 
+const movieRouter = express.Router();
+
 function router(nav){
-    const movies = [
-        {
-            title: 'The Dark Knight',
-            genre: 'Superhero',
-            director: 'Christopher Nolan',
-            watched: false
-        },
-        {
-            title: 'The Godfather',
-            genre: 'Gangster',
-            director: 'Francis Ford Coppola',
-            watched: false
-        },
-        {
-            title: 'The Social Network',
-            genre: 'Biography',
-            director: 'David Fincher',
-            watched: false
-        },
-        {
-            title: 'The Lord of the Rings: The Return of the King',
-            genre: 'Fantasy',
-            director: 'Peter Jackson',
-            watched: false
-        }
-    ];
     
     movieRouter.route('/')
     .get((req,res) => {
 
-        (async function query (){
-            const request = new sql.Request();
-            const {recordset} = await request.query('select * from movies');
-            debug(recordset);
-            res.render(
-                'movieListView', 
-                { 
-                    nav, 
-                    title: 'My Movies',
-                    movies: recordset
-                });
-        }());
+        const url = 'mongodb://localhost:27017';
+        const dbName = 'moviesApp';
+        (async function mongo(){
+            let client;
+            try{
+                client = await MongoClient.connect(url);
+                debug('Connected to the server');
+                
+                const db = client.db(dbName);
+
+                const col = await db.collection('movies');
+                debug('collection ' + col);
+                const movies = await col.find({}).toArray();
+                
+                debug('movies ' + movies[0]);
+                res.render(
+                    'movieListView', 
+                    { 
+                        nav, 
+                        title: 'My Movies',
+                        movies
+                    });
+                }catch(err){
+                    debug(err.stack);
+                }
+                client.close();
+ 
+            }());
     });
     movieRouter.route('/:id').get((req,res) => {
-        (async function query(){
-            const {id} = req.params;
-            const request = new sql.Request();
-            const {recordset} = await request.input('id', sql.Int, id)
-            .query('select * from movies where id=@id');
-            debug(recordset);
-            res.render(
-                'movieView', 
-                { 
-                    nav, 
-                    title: 'My Movies',
-                    movie: recordset[0]
-                });
-    }());
+        const url = 'mongodb://localhost:27017';
+        const dbName = 'moviesApp'; 
+        const {id} = req.params;
+
+        (async function mongo(){
+            let client;
+            try{
+                client = await MongoClient.connect(url);
+                debug('Connected to the server');
+                
+                const db = client.db(dbName);
+
+                const col = await db.collection('movies');
+                
+                const movie = await col.findOne({_id: new ObjectID(id) });
+                debug(movie);
+                res.render(
+                    'movieView',
+                    {
+                        nav,
+                        title: 'My Movies',
+                        movie
+                    }
+                )
+            }catch(err){
+                debug(err.stack);
+            }
+            client.close();
+        }());
         
     });
     return movieRouter;
