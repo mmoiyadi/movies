@@ -1,82 +1,18 @@
 const express = require('express');
-const {MongoClient, ObjectID} = require('mongodb');
-const debug = require('debug')('app');
+const movieController = require('../controllers/movieController.js');
 
 const movieRouter = express.Router();
-
+const movieService = require('../services/imdbService.js');
 function router(nav){
-    movieRouter.use((req, res, next) => {
-        if(req.user){
-            next();
-        }
-        else{
-            res.redirect('/');
-        }
-    });
+    const { getIndex, getById, middleware} = movieController(movieService, nav);
+    movieRouter.use(middleware)
+    
     movieRouter.route('/')
-    .get((req,res) => {
+        .get(getIndex);
 
-        const url = 'mongodb://localhost:27017';
-        const dbName = 'moviesApp';
-        (async function mongo(){
-            let client;
-            try{
-                client = await MongoClient.connect(url);
-                debug('Connected to the server');
-                
-                const db = client.db(dbName);
+    movieRouter.route('/:id')
+        .get(getById);
 
-                const col = await db.collection('movies');
-                debug('collection ' + col);
-                const movies = await col.find({}).toArray();
-                
-                debug('movies ' + movies[0]);
-                res.render(
-                    'movieListView', 
-                    { 
-                        nav, 
-                        title: 'My Movies',
-                        movies
-                    });
-                }catch(err){
-                    debug(err.stack);
-                }
-                client.close();
- 
-            }());
-    });
-    movieRouter.route('/:id').get((req,res) => {
-        const url = 'mongodb://localhost:27017';
-        const dbName = 'moviesApp'; 
-        const {id} = req.params;
-
-        (async function mongo(){
-            let client;
-            try{
-                client = await MongoClient.connect(url);
-                debug('Connected to the server');
-                
-                const db = client.db(dbName);
-
-                const col = await db.collection('movies');
-                
-                const movie = await col.findOne({_id: new ObjectID(id) });
-                debug(movie);
-                res.render(
-                    'movieView',
-                    {
-                        nav,
-                        title: 'My Movies',
-                        movie
-                    }
-                )
-            }catch(err){
-                debug(err.stack);
-            }
-            client.close();
-        }());
-        
-    });
     return movieRouter;
 }
 
