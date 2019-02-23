@@ -5,7 +5,14 @@ const debug = require('debug')('app');
 const movieRouter = express.Router();
 
 function router(nav){
-    
+    movieRouter.use((req, res, next) => {
+        if(req.user){
+            next();
+        }
+        else{
+            res.redirect('/');
+        }
+    });
     movieRouter.route('/')
     .get((req,res) => {
 
