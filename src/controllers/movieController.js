@@ -51,7 +51,7 @@ function movieController( movieService, nav){
                 const movie = await col.findOne({_id: new ObjectID(id) });
                 debug(movie); 
 
-                movie.details = await movieService.getMovieById();
+                movie.details = await movieService.getMovieById(movie.title);
                 res.render(
                     'movieView',
                     {
