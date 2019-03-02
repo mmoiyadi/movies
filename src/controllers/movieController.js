@@ -33,6 +33,31 @@ function movieController( movieService, nav){
             }());
         
     }
+
+    function postById(req, res){
+        const url = 'mongodb://localhost:27017';
+        const dbName = 'moviesApp'; 
+        const {movieId} = req.body;
+        (async function mongo(){
+            let client;
+            try{
+                client = await MongoClient.connect(url);
+                debug("movieId:"+movieId);
+                debug(req.user);
+                const db = client.db(dbName);
+                const userWatchedMovie = { userId: req.user._id, movieId: movieId };
+                const response = await db.collection('userWatchedMovies').insertOne(userWatchedMovie);
+                res.send('action succeeded');
+                //res.redirect('/');
+                //res.send("some garbage");
+
+            }catch(err){
+                debug(err.stack);
+            }
+        }());
+
+    }
+
     function getById(req, res){
         const url = 'mongodb://localhost:27017';
         const dbName = 'moviesApp'; 
@@ -51,7 +76,7 @@ function movieController( movieService, nav){
                 const movie = await col.findOne({_id: new ObjectID(id) });
                 debug(movie); 
 
-                movie.details = await movieService.getMovieById(movie.title);
+                movie.details = await movieService.getMovieByTitle(movie.title);
                 res.render(
                     'movieView',
                     {
@@ -81,6 +106,7 @@ function movieController( movieService, nav){
     return {
         getIndex,
         getById,
+        postById,
         middleware
     };
 }

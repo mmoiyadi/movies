@@ -157,6 +157,14 @@ a,a:hover {
   padding:6px;
   color:#fff;
 }
+
+.Container button{ /* You Can Name it what you want*/
+  margin-right:16px;
+  }
+.Container button:last-child{
+  margin-right:0px;
+  /*so the last one dont push the div thas giving the space only between the inputs*/
+  }
     
 .btn-twitter {background-color:#4099FF;color:#fff;}
 .btn-facebook {background-color:#3B5998;color:#fff;}

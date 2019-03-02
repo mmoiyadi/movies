@@ -89,10 +89,10 @@
           
             <div class="row">    
                     <br>
-                    <div class="col-md-2 col-sm-3 text-center">
-                        <a class="story-title" href="#"><img alt="" src="<%=movie.details.imageUrl%>" style="width:100px;height:100px" class="img-circle"></a>
+                    <div class="col-md-3 col-sm-3 text-center">
+                        <a class="story-title" href="#"><img alt="" src="<%=movie.details.imageUrl%>" style="width:200px;height:300px" class="img-circle"></a>
                     </div>
-                    <div class="col-md-10 col-sm-9">
+                    <div class="col-md-9 col-sm-9">
                         <h3><%=movie.title%></h3>
                         <div class="row">
                         <div class="col-xs-9">
@@ -107,9 +107,22 @@
           <!--/stories-->
           <hr>
           <!--/stories-->
+          <div class="Container">
+            <!-- <a href="/movies/<%=movie._id%>" class="btn btn-primary pull-left btnNext">Watched <i class="glyphicon glyphicon-chevron-left"></i></a> -->
+            <form action="/movies/<%=movie._id%>" method="post">
+              <button type="submit" name="movieId" value="<%=movie.details.imdbId%>" class="btn btn-primary pull-left btnNext">Watched</button>
+            </form>
+            <form action="/movies/<%=movie._id%>" method="post">
+              <button type="submit" name="movieId" value="<%=movie.details.imdbId%>" class="btn btn-primary pull-left btnNext">Add to Watch List</button>
+            </form>
+          
+            <!-- <a href="/" class="btn btn-primary pull-left btnNext">Add to Watch List <i class="glyphicon glyphicon-chevron-left"></i></a> -->
+          </div>
+            <a href="/" class="btn btn-primary pull-right btnNext">More <i class="glyphicon glyphicon-chevron-right"></i></a>
           
           
-          <a href="/" class="btn btn-primary pull-right btnNext">More <i class="glyphicon glyphicon-chevron-right"></i></a>
+          
+          
         
           
         </div>

@@ -41,7 +41,8 @@ app.set('view engine', 'ejs');
 
 const nav =  [
     {title: 'Movies', link:'/movies'},
-    {title: 'Directors', link: '/directors'}
+    {title: 'Directors', link: '/directors'},
+    {title: 'Actors/Actresses', link:'/actors'}
 ]; 
 
 const movieRouter = require('./src/routes/movieRoute')(nav);
@@ -59,7 +60,8 @@ app.get("/", function (req, res) {
         'index', 
         { 
             nav: [{title: 'Movies',link:'/movies'},
-                  {title: 'Directors', link: '/directors'}], 
+                  {title: 'Directors', link: '/directors'},
+                  {title: 'Actors/Actresses', link:'/actors'}], 
             title: 'My Movies'});
 });
 
